@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class InitiateOnStartUp {
@@ -85,4 +87,5 @@ public class InitiateOnStartUp {
         accountNoteRepository.save(new AccountNote(account1, note3, Right.WRITE));
 
     }
+
 }
