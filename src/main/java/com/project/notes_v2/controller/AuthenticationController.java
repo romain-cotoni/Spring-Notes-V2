@@ -1,20 +1,21 @@
 package com.project.notes_v2.controller;
 
-import com.project.notes_v2.security.CustomAuthenticationSuccessHandler;
-import org.springframework.security.authentication.AuthenticationManager;
+import com.project.notes_v2.exception.FailedRequestException;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("api/authentication")
 public class AuthenticationController {
-    private final AuthenticationManager authenticationManager;
-    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    //private final AuthenticationManager authenticationManager;
+    //private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
-    public AuthenticationController(AuthenticationManager authenticationManager,
+    /*public AuthenticationController(AuthenticationManager authenticationManager,
                                     CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
         this.authenticationManager = authenticationManager;
         this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
-    }
+    }*/
 
     /*@PostMapping(value = "/login")
     public ResponseEntity<String> login(HttpSession session, @RequestBody AuthenticationDTO authenticationDTO) {
