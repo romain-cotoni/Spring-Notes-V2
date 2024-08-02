@@ -59,20 +59,20 @@ public class NoteController {
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> createNote(@RequestBody NoteDTO noteDTO) {
+    public ResponseEntity<Note> createNote(@RequestBody NoteDTO noteDTO) {
         try {
-            this.noteService.createNote(noteDTO);
-            return ResponseEntity.ok().body(true);
+            Note note = this.noteService.createNote(noteDTO);
+            return ResponseEntity.ok().body(note);
         } catch(FailedRequestException exception) {
             throw new FailedRequestException();
         }
     }
 
     @PatchMapping("/{noteId}")
-    public ResponseEntity<Boolean> updateNote(@PathVariable int noteId, @RequestBody NoteDTO noteDTO) {
+    public ResponseEntity<Note> updateNote(@PathVariable int noteId, @RequestBody NoteDTO noteDTO) {
         try {
-            this.noteService.updateNote(noteId, noteDTO);
-            return ResponseEntity.ok(true);
+            Note note = this.noteService.updateNote(noteId, noteDTO);
+            return ResponseEntity.ok(note);
         } catch(FailedRequestException exception) {
             throw new FailedRequestException("");
         }

@@ -28,14 +28,8 @@ import java.util.Arrays;
 public class WebSecurityConfig {
     private final AccountRepository accountRepository;
     private final CustomUserDetailsService customUserDetailsService;
-
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
-    /*public WebSecurityConfig(AccountRepository accountRepository,
-                             CustomUserDetailsService customUserDetailsService) {
-        this.accountRepository = accountRepository;
-        this.customUserDetailsService = customUserDetailsService;
-    }*/
 
     /**
      * Returns a BCryptPasswordEncoder bean to securely hash and verify passwords
@@ -46,6 +40,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
     /**
      * Returns a custom UserDetailsService bean that provides the mechanism
      *  for loading user-specific data required during the authentication process.
@@ -54,6 +49,7 @@ public class WebSecurityConfig {
     public UserDetailsService userDetailsService() {
         return customUserDetailsService;
     }
+
 
     /**
      * Returns a DaoAuthenticationProvider that uses a custom UserDetailsService and PasswordEncoder
@@ -67,6 +63,7 @@ public class WebSecurityConfig {
         return provider;
     }
 
+
     /**
      * handling successful authentication events.
      * defines custom actions to be executed after a user has successfully logged in.
@@ -76,36 +73,17 @@ public class WebSecurityConfig {
         return new CustomAuthenticationSuccessHandler(this.accountRepository);
     }
 
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+
     /**
      * Configures and returns a SecurityFilterChain bean
      *   to define the security settings for HTTP requests in the application.
      */
-    /*@Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .cors(cors -> cors.configurationSource( corsConfigurationSource() ) )
-            .csrf(csrf -> csrf.disable())
-            .authorizeRequests(request -> {
-                request.requestMatchers(new AntPathRequestMatcher("/api/accounts","POST")).permitAll();
-                request.requestMatchers(new AntPathRequestMatcher("/api/authentication/login","POST")).permitAll();
-                request.requestMatchers(new AntPathRequestMatcher("/api/authentication/successLogout")).permitAll();
-                request.anyRequest().authenticated();
-            })
-            .addFilterBefore(new CustomAuthenticationFilter("/api/authentication/login", http.getSharedObject(AuthenticationManager.class), customAuthenticationSuccessHandler), UsernamePasswordAuthenticationFilter.class)
-            .logout(request -> {
-                request.logoutUrl("/api/authentication/logout");
-                request.logoutSuccessUrl("/api/authentication/successLogout");
-                request.invalidateHttpSession(true);
-                request.deleteCookies("JSESSIONID");
-            })
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
-        return http.build();
-    }*/
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -136,6 +114,7 @@ public class WebSecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         return http.build();
     }
+
 
     /**
      * cors configuration

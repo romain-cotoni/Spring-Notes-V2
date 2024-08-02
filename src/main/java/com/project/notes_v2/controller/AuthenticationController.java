@@ -8,14 +8,6 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("api/authentication")
 public class AuthenticationController {
-    //private final AuthenticationManager authenticationManager;
-    //private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-
-    /*public AuthenticationController(AuthenticationManager authenticationManager,
-                                    CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
-        this.authenticationManager = authenticationManager;
-        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
-    }*/
 
     /*@PostMapping(value = "/login")
     public ResponseEntity<String> login(HttpSession session, @RequestBody AuthenticationDTO authenticationDTO) {
@@ -25,9 +17,9 @@ public class AuthenticationController {
             System.out.println(exception);
             return ResponseEntity.ok("Login unsuccessful");
         }
-    }
+    }*/
 
-    @PostMapping("/logout")
+    /*@PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
         session.invalidate();
         return ResponseEntity.ok("You are been logged out");

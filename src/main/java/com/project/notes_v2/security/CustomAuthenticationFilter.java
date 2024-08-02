@@ -28,6 +28,7 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
         this.authenticationSuccessHandler = authenticationSuccessHandler;
     }
 
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
         throws AuthenticationException, IOException, ServletException {
@@ -38,14 +39,15 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
         return getAuthenticationManager().authenticate(token);
     }
 
+
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        // You can customize the response after successful authentication here if needed
         authenticationSuccessHandler.onAuthenticationSuccess(request, response, authResult);
     }
+
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request,

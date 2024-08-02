@@ -77,7 +77,7 @@ public class NoteService {
     }
 
     @Transactional
-    public void createNote(NoteDTO noteDTO) {
+    public Note createNote(NoteDTO noteDTO) {
         // map noteToCreate with noteDTO
         Note noteToCreate = new Note();
         noteToCreate.setTitle(StringUtils.hasText(noteDTO.getTitle())  ? noteDTO.getTitle() : "New note");// set title if empty
@@ -98,19 +98,21 @@ public class NoteService {
         AccountNote accountNote = this.setAccountNote(getSessionUserId(), noteSaved.getId(), Right.OWNER);
         // save AccountNote association
         this.saveAccountNote(accountNote);
+
+        return noteSaved;
     }
 
     @Transactional
-    public void updateNote(int noteId, NoteDTO noteDTO) {
+    public Note updateNote(int noteId, NoteDTO noteDTO) {
         // check user is allowed to update note
         if(!this.checkUserHasRight(Right.WRITE, noteId)) { throw new UnauthorizedException(); }
         // get note to update
         Note noteToUpdate = this.getNote(noteId);
         // update note
-        if(!noteDTO.getTitle().isEmpty()) {
+        if(StringUtils.hasLength(noteDTO.getTitle())) {  //!noteDTO.getTitle().isEmpty())
             noteToUpdate.setTitle(noteDTO.getTitle());
         }
-        if(noteDTO.getContent() != null && !noteDTO.getContent().isEmpty()) {
+        if(StringUtils.hasLength(noteDTO.getContent())) { // noteDTO.getContent() != null && !noteDTO.getContent().isEmpty()
             noteToUpdate.setContent(noteDTO.getContent());
         }
         if(noteDTO.getImages() != null && !noteDTO.getImages().isEmpty()) {
@@ -123,7 +125,7 @@ public class NoteService {
         // set the datetime of modification
         noteToUpdate.setModified(Instant.now());
         // save note
-        this.saveNote(noteToUpdate);
+        return this.saveNote(noteToUpdate);
     }
 
     @Transactional
