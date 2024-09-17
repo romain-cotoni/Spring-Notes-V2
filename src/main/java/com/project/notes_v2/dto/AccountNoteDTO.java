@@ -15,6 +15,9 @@ public class AccountNoteDTO {
 
     private Integer noteId;
 
+    private String username;
+
     private Right right;
 
+    private String message;
 }

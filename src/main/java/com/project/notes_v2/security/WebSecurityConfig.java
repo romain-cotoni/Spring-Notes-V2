@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -91,6 +90,7 @@ public class WebSecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeRequests(request -> {
                 request.requestMatchers(new AntPathRequestMatcher("/api/accounts","POST")).permitAll();
+                request.requestMatchers(new AntPathRequestMatcher("/api/accounts/recoverPassword","POST")).permitAll();
                 request.requestMatchers(new AntPathRequestMatcher("/api/authentication/login")).permitAll();
                 request.requestMatchers(new AntPathRequestMatcher("/api/authentication/successLogout")).permitAll();
                 request.anyRequest().authenticated();

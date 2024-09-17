@@ -1,10 +1,13 @@
 package com.project.notes_v2.controller;
 
-import com.project.notes_v2.dto.AccountDTO;
+import com.project.notes_v2.dto.AccountResponseDTO;
 import com.project.notes_v2.model.Account;
+import com.project.notes_v2.dto.AccountNoteDTO;
+import com.project.notes_v2.dto.AccountRequestDTO;
 import com.project.notes_v2.service.AccountService;
 import com.project.notes_v2.exception.FailedRequestException;
-import org.springframework.http.ResponseEntity;
+import com.project.notes_v2.service.EmailService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,17 +17,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
 
+import jakarta.mail.MessagingException;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Validated
 @RestController
 @RequestMapping("api/accounts")
 public class AccountController {
-    private final AccountService accountService;
 
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
+    private final AccountService accountService;
+    private final EmailService emailService;
 
     @GetMapping
     public ResponseEntity<List<Account>> getAccounts() {
@@ -51,6 +61,16 @@ public class AccountController {
         }
     }
 
+    @GetMapping("/byNote/{noteId}")
+    public ResponseEntity<List<AccountNoteDTO>> getAccountByNoteId(@PathVariable int noteId) {
+        try {
+            List<AccountNoteDTO> accountsNote = this.accountService.getAccountByNoteId(noteId);
+            return ResponseEntity.ok(accountsNote);
+        } catch(FailedRequestException exception) {
+            throw new FailedRequestException();
+        }
+    }
+
     @GetMapping("/{accountId}")
     public ResponseEntity<Account> getAccount(@PathVariable int accountId) {
         try {
@@ -66,17 +86,40 @@ public class AccountController {
         try {
             this.accountService.createAccount(account);
             return ResponseEntity.ok(true);
-        } catch(FailedRequestException exception) {
+        } catch(FailedRequestException | MessagingException exception) {
+            throw new FailedRequestException();
+        }
+    }
+
+    @PostMapping("/recoverPassword")
+    public ResponseEntity<Map<String, String>> recoverPassword(@RequestBody AccountRequestDTO accountRequestDTO) {
+        try {
+            this.accountService.recoverPassword(accountRequestDTO.getEmail(), accountRequestDTO.getUsername());
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Email sent successfully!");
+            return ResponseEntity.ok(response);
+        } catch(FailedRequestException | MessagingException exception) {
+            throw new FailedRequestException();
+        }
+    }
+
+    @PatchMapping
+    public ResponseEntity<AccountResponseDTO> updateAccount(@RequestBody AccountRequestDTO accountRequestDTO) {
+        try {
+            AccountResponseDTO accountResponseDTO = this.accountService.updateAccount(accountRequestDTO);
+            return ResponseEntity.ok(accountResponseDTO);
+        } catch(FailedRequestException | MessagingException exception) {
             throw new FailedRequestException();
         }
     }
 
     @PatchMapping("/{accountId}")
-    public ResponseEntity<Boolean> updateAccount(@PathVariable int accountId, @RequestBody AccountDTO accountDTORequest) {
+    public ResponseEntity<Boolean> updateAccount(@PathVariable int accountId, @RequestBody AccountRequestDTO accountRequestDTO) {
         try {
-            this.accountService.updateAccount(accountId, accountDTORequest);
+            this.accountService.updateAccount(accountId, accountRequestDTO);
             return ResponseEntity.ok(true);
-        } catch(FailedRequestException exception) {
+        } catch(FailedRequestException | MessagingException exception) {
             throw new FailedRequestException();
         }
     }

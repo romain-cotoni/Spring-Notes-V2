@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 public class AssociationException extends CustomException {
 
     public AssociationException() {
-        this.httpStatus = HttpStatus.BAD_REQUEST;
+        this.httpStatus = HttpStatus.CONFLICT;
         this.message = "Association Exception";
     }
 }

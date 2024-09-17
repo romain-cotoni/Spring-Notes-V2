@@ -1,9 +1,10 @@
 package com.project.notes_v2.exception;
 
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -13,7 +14,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
+    /*
      * 200 OK: The request was successful.
      * 201 Created: A new resource has been created successfully.
      * 400 Bad Request: The request was malformed.
@@ -23,6 +24,23 @@ public class GlobalExceptionHandler {
      * 409 Conflict: conflict with the current state of the target resource.
      * 500 Internal Server Error: An unexpected error occurred.
      */
+
+
+    /**
+     * Validator failed on entity field exception
+     * @param exception MethodArgumentNotValidException
+     * @return HTTP status bad request
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException exception) {
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getAllErrors().forEach( error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 
 
     /**
@@ -40,6 +58,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AssociationException.class)
     public ResponseEntity<Map<String, Object>> handleAssociationException(AssociationException exception) {
+        return setResponseEntity(HttpStatus.CONFLICT, exception.getMessage());
+    }
+
+    /**
+     * @param exception AlreadyExistException
+     * @return HTTP STATUS CODE 409 Conflict
+     */
+    @ExceptionHandler(AlreadyExistException.class)
+    public ResponseEntity<Map<String, Object>> handleAlreadyExistException(AlreadyExistException exception) {
         return setResponseEntity(HttpStatus.CONFLICT, exception.getMessage());
     }
 

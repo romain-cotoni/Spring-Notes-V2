@@ -1,33 +1,23 @@
 package com.project.notes_v2.controller;
 
-import com.project.notes_v2.exception.FailedRequestException;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import com.project.notes_v2.dto.AccountResponseDTO;
+import com.project.notes_v2.service.AccountService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
 
+
+@RequiredArgsConstructor
 @RestController
-@AllArgsConstructor
 @RequestMapping("api/authentication")
 public class AuthenticationController {
 
-    /*@PostMapping(value = "/login")
-    public ResponseEntity<String> login(HttpSession session, @RequestBody AuthenticationDTO authenticationDTO) {
-        try {
-            return ResponseEntity.ok("Login successful");
-        } catch(RuntimeException exception) {
-            System.out.println(exception);
-            return ResponseEntity.ok("Login unsuccessful");
-        }
-    }*/
-
-    /*@PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok("You are been logged out");
-    }*/
+    private final AccountService accountService;
 
     @GetMapping("/successLogin")
-    public String getSuccessLogin() {
-        return "You are successfully connected :)";
+    public AccountResponseDTO getSuccessLogin() {
+        return accountService.getAccount();
     }
 
     @GetMapping("/successLogout")

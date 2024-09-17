@@ -1,7 +1,5 @@
 package com.project.notes_v2.security;
-import com.project.notes_v2.exception.NotFoundException;
 import com.project.notes_v2.model.Account;
-import com.project.notes_v2.model.AccountNote;
 import com.project.notes_v2.repository.AccountRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,13 +24,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Optional<Account> OptionlAccount = this.accountRepository.findByUsername(userDetails.getUsername());
-        int sessionUserId = Optional.ofNullable(this.accountRepository.findByUsername(userDetails.getUsername()))
-                                    .map(account -> account.get().getId())
-                                    .orElseThrow( () -> new NotFoundException("Account not found - username: " + userDetails.getUsername()));
-        HttpSession session = request.getSession();
-        session.setAttribute("sessionUserId", sessionUserId);
-        response.sendRedirect("/api/authentication/successLogin");
+        Optional<Account> account = accountRepository.findByUsername(userDetails.getUsername());
+         if(account.isPresent()) {
+             int sessionUserId = account.get().getId();
+             HttpSession session = request.getSession();
+             session.setAttribute("sessionUserId", sessionUserId);
+             response.sendRedirect("/api/authentication/successLogin");
+         }
     }
 
 

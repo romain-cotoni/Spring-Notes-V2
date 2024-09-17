@@ -8,10 +8,9 @@ import lombok.Setter;
 import java.time.Instant;
 import java.util.Set;
 
-
 @Getter
 @Setter
-public class NoteDTO {
+public class NoteResponseDTO {
     private Integer id;
 
     private String title;
@@ -20,14 +19,9 @@ public class NoteDTO {
 
     private Instant modified;
 
-    private boolean isPublic = false;
-
-    private Share share = Share.OK;
+    private Share share;
 
     private String content;
 
     private Set<AccountNote> accountNotes;
 }
-
-
-
