@@ -41,6 +41,8 @@ jobs:
           port: ${{ secrets.OVH_VPS_SSH_PORT }}
           source: target/*.jar
           target: /opt/notes/app.jar
+          strip-components: 1  # Ensure that only the file is copied, not as a directory
+          overwrite: true  # Ensure the file is overwritten if it exists
 
       - name: Deploy Spring Boot App
         uses: appleboy/ssh-action@v0.1.1
