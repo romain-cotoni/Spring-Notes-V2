@@ -121,7 +121,7 @@ public class WebSecurityConfig {
      */
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("https://www.getpostman.com", "http://localhost:4200/"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList("https://www.getpostman.com", "http://localhost:4200/", "http://51.77.210/168", "http://vps-a1453f27.vps.ovh.net/", "http://notes-write.ovh", "http://www.notes-write.ovh", "https://notes-write.ovh", "https://www.notes-write.ovh"));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(3600L);
