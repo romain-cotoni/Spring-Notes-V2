@@ -39,9 +39,8 @@ jobs:
           username: ${{ secrets.OVH_VPS_SSH_USER }}
           key: ${{ secrets.OVH_VPS_SSH_PRIVATE_KEY }}
           port: ${{ secrets.OVH_VPS_SSH_PORT }}
-          source: target/*.jar
+          source: target/notes_v2-0.0.1-SNAPSHOT.jar
           target: /opt/notes/app.jar
-          strip-components: 1  # Ensure that only the file is copied, not as a directory
           overwrite: true  # Ensure the file is overwritten if it exists
 
       - name: Deploy Spring Boot App
