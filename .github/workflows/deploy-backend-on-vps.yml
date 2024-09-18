@@ -28,6 +28,7 @@ jobs:
           host: ${{ secrets.OVH_VPS_SSH_HOST }}
           username: ${{ secrets.OVH_VPS_SSH_USER }}
           key: ${{ secrets.OVH_VPS_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.OVH_VPS_SSH_PORT }}
           source: target/*.jar
           target: /home/${{ secrets.OVH_VPS_SSH_USER }}/Spring-Notes/Spring-Notes/target/app.jar
 
@@ -37,6 +38,7 @@ jobs:
           host: ${{ secrets.OVH_VPS_SSH_HOST }}
           username: ${{ secrets.OVH_VPS_SSH_USER }}
           key: ${{ secrets.OVH_VPS_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.OVH_VPS_SSH_PORT }}
           script: |  
             export OVH_VPS_DB_POSTGRESQL_URL=${{ secrets.OVH_VPS_DB_POSTGRESQL_URL }}
             export OVH_VPS_DB_POSTGRESQL_USERNAME=${{ secrets.OVH_VPS_DB_POSTGRESQL_USERNAME }}
