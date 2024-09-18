@@ -3,7 +3,7 @@ name: Deploy Spring Boot Application
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   build:
@@ -29,7 +29,7 @@ jobs:
           username: ${{ secrets.OVH_VPS_SSH_USER }}
           key: ${{ secrets.OVH_VPS_SSH_PRIVATE_KEY }}
           source: target/*.jar
-          target: /home/${{ secrets.SSH_USERNAME }}/app.jar
+          target: /home/${{ secrets.OVH_VPS_SSH_USER }}/Spring-Notes/Spring-Notes/target/app.jar
 
       - name: Deploy Spring Boot App
         uses: appleboy/ssh-action@v0.1.1
@@ -37,7 +37,15 @@ jobs:
           host: ${{ secrets.OVH_VPS_SSH_HOST }}
           username: ${{ secrets.OVH_VPS_SSH_USER }}
           key: ${{ secrets.OVH_VPS_SSH_PRIVATE_KEY }}
-          script: |
-            sudo systemctl stop notes
-            sudo mv /home/${{ secrets.OVH_VPS_SSH_USER }}/app.jar /opt/notes/app.jar
-            sudo systemctl start notes
+          script: |  
+            export OVH_VPS_DB_POSTGRESQL_URL=${{ secrets.OVH_VPS_DB_POSTGRESQL_URL }}
+            export OVH_VPS_DB_POSTGRESQL_USERNAME=${{ secrets.OVH_VPS_DB_POSTGRESQL_USERNAME }}
+            export OVH_VPS_DB_POSTGRESQL_PASSWORD=${{ secrets.OVH_VPS_DB_POSTGRESQL_PASSWORD }}
+            export OVH_VPS_MAIL_SERVER_SMTP_PORT=${{ secrets.OVH_VPS_MAIL_SERVER_SMTP_PORT }}
+            export OVH_VPS_MAIL_SERVER_SMTP=${{ secrets.OVH_VPS_MAIL_SERVER_SMTP }}
+            export OVH_VPS_MAIL_SERVER_USERNAME=${{ secrets.OVH_VPS_MAIL_SERVER_USERNAME }}
+            export OVH_VPS_MAIL_SERVER_PASSWORD=${{ secrets.OVH_VPS_MAIL_SERVER_PASSWORD }}
+          
+            sudo systemctl stop notes.service
+            sudo mv /home/${{ secrets.OVH_VPS_SSH_USER }}/Spring-Notes/Spring-Notes/target/app.jar /opt/notes/app.jar
+            sudo systemctl start notes.service
