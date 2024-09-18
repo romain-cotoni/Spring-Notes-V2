@@ -44,9 +44,9 @@ jobs:
             export OVH_VPS_DB_POSTGRESQL_USERNAME=${{ secrets.OVH_VPS_DB_POSTGRESQL_USERNAME }}
             export OVH_VPS_DB_POSTGRESQL_PASSWORD=${{ secrets.OVH_VPS_DB_POSTGRESQL_PASSWORD }}
             export OVH_VPS_MAIL_SERVER_SMTP_PORT=${{ secrets.OVH_VPS_MAIL_SERVER_SMTP_PORT }}
-            export OVH_VPS_MAIL_SERVER_SMTP=${{ secrets.OVH_VPS_MAIL_SERVER_SMTP }}
-            export OVH_VPS_MAIL_SERVER_USERNAME=${{ secrets.OVH_VPS_MAIL_SERVER_USERNAME }}
-            export OVH_VPS_MAIL_SERVER_PASSWORD=${{ secrets.OVH_VPS_MAIL_SERVER_PASSWORD }}
+            export OVH_VPS_MAIL_SERVER_SMTP_HOST=${{ secrets.OVH_VPS_MAIL_SERVER_SMTP_HOST }}
+            export OVH_VPS_MAIL_SERVER_SMTP_USERNAME=${{ secrets.OVH_VPS_MAIL_SERVER_SMTP_USERNAME }}
+            export OVH_VPS_MAIL_SERVER_SMTP_PASSWORD=${{ secrets.OVH_VPS_MAIL_SERVER_SMTP_PASSWORD }}
           
             sudo systemctl stop notes.service
             sudo systemctl start notes.service
