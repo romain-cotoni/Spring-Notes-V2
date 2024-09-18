@@ -59,5 +59,4 @@ jobs:
             export OVH_VPS_MAIL_SERVER_PASSWORD=${{ secrets.OVH_VPS_MAIL_SERVER_PASSWORD }}
           
             sudo systemctl stop notes.service
-      #sudo mv /home/${{ secrets.OVH_VPS_SSH_USER }}/Spring-Notes/Spring-Notes/target/app.jar /opt/notes/app.jar
             sudo systemctl start notes.service
