@@ -43,8 +43,8 @@ jobs:
           host: ${{ secrets.OVH_VPS_SSH_HOST }}
           username: ${{ secrets.OVH_VPS_SSH_USER }}
           key: ${{ secrets.OVH_VPS_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.OVH_VPS_SSH_PORT }}
           script: |
-            port: ${{ secrets.OVH_VPS_SSH_PORT }}
             # Step 5a: Update the notes.service file with the environment variables
             sudo tee /etc/systemd/system/notes.service > /dev/null <<EOL
             [Unit]
