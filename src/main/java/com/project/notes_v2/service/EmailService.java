@@ -50,6 +50,18 @@ public class EmailService {
         mailSender.send(mimeMessage);
     }
 
+    public void sendShareNoteNotification(String destinationEmail, String usernameSharing, String usernameShared, String title) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+        helper.setFrom("notes.write.app@gmail.com");
+        helper.setTo(destinationEmail);
+        String subject = "Note shared";
+        String htmlMsg = this.setTextNoteShared(usernameSharing, usernameShared, title);
+        helper.setText(htmlMsg, true);
+        helper.setSubject(subject);
+        mailSender.send(mimeMessage);
+    }
+
     private String setTextAccountCreation(String destinationEmail, String username) {
         return "<h3>Account creation notes-write.ovh</h3>" +
                 "<p>This is a confirmation email.</p>" +
@@ -77,12 +89,23 @@ public class EmailService {
     private String setTextLostPassword(String password) {
         return "<h3>Account update notes-write.ovh</h3>" +
                 "<p>This is a requested email.</p>" +
-                "<p>Please find as requested a reminder of your password</p>" +
+                "<p>Please find as requested your new password generated</p>" +
                 "<p>Password    : " + password + "</p> " +
                 "<p>Thank you.</p>" +
                 "<p>Romain Cotoni</p>" +
                 "<p>Linkedin : <a href='https://www.linkedin.com/in/romain-cotoni/'>romain-cotoni</a></p>" +
                 "<p>Github : <a href='https://github.com/romain-cotoni'>romain-cotoni</a></p>";
+    }
+
+    private String setTextNoteShared(String usernameSharing, String usernameShared, String title) {
+        return "<h3>Note shared - notes-write.ovh</h3>" +
+               "<p>This is a notification email.</p>" +
+               "<p>Hello " + usernameShared + ".</p>" +
+               "<p>This Note : '" + title + "' has been shared with you by " + usernameSharing + ".</p>" +
+               "<p>Thank you.</p>" +
+               "<p>Romain Cotoni</p>" +
+               "<p>Linkedin : <a href='https://www.linkedin.com/in/romain-cotoni/'>romain-cotoni</a></p>" +
+               "<p>Github : <a href='https://github.com/romain-cotoni'>romain-cotoni</a></p>";
     }
 
 

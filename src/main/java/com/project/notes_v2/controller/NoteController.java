@@ -5,6 +5,7 @@ import com.project.notes_v2.dto.NoteRequestDTO;
 import com.project.notes_v2.dto.NoteResponseDTO;
 import com.project.notes_v2.exception.FailedRequestException;
 import com.project.notes_v2.service.NoteService;
+import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -101,7 +102,7 @@ public class NoteController {
         try {
             noteService.share(accountNotesDTO);
             return ResponseEntity.ok(true);
-        } catch (FailedRequestException exception) {
+        } catch (FailedRequestException | MessagingException exception) {
             throw new FailedRequestException();
         }
     }

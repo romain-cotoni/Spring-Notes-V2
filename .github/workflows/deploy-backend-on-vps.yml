@@ -54,6 +54,7 @@ jobs:
             [Service]
             User=rom1
             WorkingDirectory=/opt/notes
+            Environment="OVH_VPS_KEY_STORE_PASSWORD=${{ secrets.OVH_VPS_KEY_STORE_PASSWORD }}"
             Environment="OVH_VPS_DB_POSTGRESQL_URL=${{ secrets.OVH_VPS_DB_POSTGRESQL_URL }}"
             Environment="OVH_VPS_DB_POSTGRESQL_USERNAME=${{ secrets.OVH_VPS_DB_POSTGRESQL_USERNAME }}"
             Environment="OVH_VPS_DB_POSTGRESQL_PASSWORD=${{ secrets.OVH_VPS_DB_POSTGRESQL_PASSWORD }}"

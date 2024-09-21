@@ -23,6 +23,7 @@ import com.project.notes_v2.repository.AccountRepository;
 import com.project.notes_v2.repository.NoteRepository;
 import com.project.notes_v2.repository.NoteSpecification;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -32,6 +33,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class NoteService {
+    private final EmailService emailService;
     private final NoteRepository noteRepository;
     private final AccountRepository accountRepository;
     private final AccountNoteRepository accountNoteRepository;
@@ -158,12 +161,23 @@ public class NoteService {
 
 
     @Transactional
-    public void share(List<AccountNoteDTO> accountNotesDTO) {
+    public void share(List<AccountNoteDTO> accountNotesDTO) throws MessagingException {
+        // Get username of sharing user for notification
+        String usernameSharing = "";
+        Optional<Account> accountSession = this.accountRepository.findById(this.getSessionUserId());
+        if(accountSession.isPresent()) {
+            usernameSharing = accountSession.get().getUsername();
+        }
+
         for(AccountNoteDTO accountNoteDTO: accountNotesDTO) {
             // Check current user Account has rights to share Note
             if (!this.checkUserHasRight(Right.SHARE, accountNoteDTO.getNoteId())) {
                 throw new UnauthorizedException();
             }
+
+            String emailUserShared;
+            String usernameShared;
+            String titleNoteShared;
 
             if(this.checkAssociationExist(accountNoteDTO.getAccountId(), accountNoteDTO.getNoteId())) {
                 // If AccountNote association already exist then update RIGHT
@@ -171,14 +185,27 @@ public class NoteService {
                 if(accountNoteDTO.getRight() != null) {
                     accountNoteToUpdate.setRight(accountNoteDTO.getRight());
                 }
+                // Get email of user shared for notification
+                emailUserShared = accountNoteToUpdate.getAccount().getEmail();
+                // Get username of shared user for notification
+                usernameShared = accountNoteToUpdate.getAccount().getUsername();
+                // Get title of note shared for notification
+                titleNoteShared = accountNoteToUpdate.getNote().getTitle();
                 // Update association Account and Note
                 this.saveAccountNote(accountNoteToUpdate);
             } else { // If AccountNote doesn't exist then create
                 // Map AccountNote to share
                 AccountNote accountNoteToShare = this.setAccountNote(accountNoteDTO.getAccountId(), accountNoteDTO.getNoteId(), accountNoteDTO.getRight());
+                // Get email for notification
+                emailUserShared = accountNoteToShare.getAccount().getEmail();
+                // Get username of shared user for notification
+                usernameShared = accountNoteToShare.getAccount().getUsername();
+                // Get title of note shared for notification
+                titleNoteShared = accountNoteToShare.getNote().getTitle();
                 // Associate Account and Note
                 this.saveAccountNote(accountNoteToShare);
             }
+            this.emailService.sendShareNoteNotification(emailUserShared, usernameSharing, usernameShared, titleNoteShared);
         }
     }
 

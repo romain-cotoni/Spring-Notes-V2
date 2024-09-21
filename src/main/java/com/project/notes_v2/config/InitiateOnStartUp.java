@@ -27,7 +27,7 @@ public class InitiateOnStartUp {
     private final BCryptPasswordEncoder bcryptEncoder;
 
 
-    @PostConstruct
+    //@PostConstruct
     private void runAfterStartup() {
 
         System.out.println("--InitiateOnStartUp - Creation of fixtures--");
