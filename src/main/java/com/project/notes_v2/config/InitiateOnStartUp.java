@@ -5,9 +5,11 @@ import com.project.notes_v2.enumeration.Role;
 import com.project.notes_v2.model.Account;
 import com.project.notes_v2.model.AccountNote;
 import com.project.notes_v2.model.Note;
+import com.project.notes_v2.model.Tag;
 import com.project.notes_v2.repository.AccountNoteRepository;
 import com.project.notes_v2.repository.AccountRepository;
 import com.project.notes_v2.repository.NoteRepository;
+import com.project.notes_v2.repository.TagRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +20,8 @@ import java.time.Instant;
 @RequiredArgsConstructor
 @Component
 public class InitiateOnStartUp {
+    private final TagRepository tagRepository;
+
     private final NoteRepository noteRepository;
 
     private final AccountRepository accountRepository;
@@ -25,6 +29,8 @@ public class InitiateOnStartUp {
     private final AccountNoteRepository accountNoteRepository;
 
     private final BCryptPasswordEncoder bcryptEncoder;
+
+    private static final String PASSWORD = "ssap";
 
 
     //@PostConstruct
@@ -38,7 +44,7 @@ public class InitiateOnStartUp {
         account1.setLastname("cotoni");
         account1.setEmail("romain.cotoni.2@gmail.com");
         account1.setUsername("rom1");
-        account1.setPassword(bcryptEncoder.encode("ssap"));
+        account1.setPassword(bcryptEncoder.encode(PASSWORD));
         account1.setRole(Role.ADMIN);
         account1.setCreated(Instant.now());
         account1 = accountRepository.save(account1);
@@ -47,7 +53,7 @@ public class InitiateOnStartUp {
         Account account2 = new Account();
         account2.setEmail("romain.cotoni@gmail.com");
         account2.setUsername("rom2");
-        account2.setPassword(bcryptEncoder.encode("ssap"));
+        account2.setPassword(bcryptEncoder.encode(PASSWORD));
         account2.setRole(Role.USER);
         account2.setCreated(Instant.now());
         accountRepository.save(account2);
@@ -56,7 +62,7 @@ public class InitiateOnStartUp {
         Account account3 = new Account();
         account3.setEmail("rom3@mail.com");
         account3.setUsername("rom3");
-        account3.setPassword(bcryptEncoder.encode("ssap"));
+        account3.setPassword(bcryptEncoder.encode(PASSWORD));
         account3.setRole(Role.USER);
         account3.setCreated(Instant.now());
         accountRepository.save(account3);
@@ -65,7 +71,7 @@ public class InitiateOnStartUp {
         Account account4 = new Account();
         account4.setEmail("tom1@mail.com");
         account4.setUsername("tom1");
-        account4.setPassword(bcryptEncoder.encode("ssap"));
+        account4.setPassword(bcryptEncoder.encode(PASSWORD));
         account4.setRole(Role.USER);
         account4.setCreated(Instant.now());
         accountRepository.save(account4);
@@ -74,24 +80,48 @@ public class InitiateOnStartUp {
         Account account5 = new Account();
         account5.setEmail("tom2@mail.com");
         account5.setUsername("tom2");
-        account5.setPassword(bcryptEncoder.encode("ssap"));
+        account5.setPassword(bcryptEncoder.encode(PASSWORD));
         account5.setRole(Role.USER);
         account5.setCreated(Instant.now());
         accountRepository.save(account5);
+
+        // create tags
+        Tag tag1 = new Tag();
+        tag1.setName("Angular");
+        tagRepository.save(tag1);
+
+        Tag tag2 = new Tag();
+        tag2.setName("Java");
+        tagRepository.save(tag2);
+
+        Tag tag3 = new Tag();
+        tag3.setName("Typescript");
+        tagRepository.save(tag3);
+
+        Tag tag4 = new Tag();
+        tag4.setName("Springboot");
+        tagRepository.save(tag4);
+
 
         // create note 1
         Note note1 = new Note();
         note1.setTitle("note 1 title");
         note1.setContent("<h1>hello world rom1</h1>" +
                          "<p>TODO: </p>" +
+                         "<p>Add icon lock / unlock</p>" +
                          "<p>Backend custom enum & password validators.</p>" +
                          "<p>Make a note public.</p>" +
-                         "<p>Confirm email to finalise registration.</p>" +
-                         "<p>Add send email for each notification and display them in Header & Profil.</p>" +
+                         "<p>Add email send badge notification in Header & Profil.</p>" +
                          "<p>Translation French English.</p>" +
                          "<p>Develop isDevMode only for ADMIN.</p>");
         note1.setCreated(Instant.now());
         note1 = noteRepository.save(note1);
+        note1.getTags().add(tag1);
+        note1.getTags().add(tag2);
+        note1.getTags().add(tag3);
+        note1.getTags().add(tag4);
+        note1 = noteRepository.save(note1);
+
 
         // create note 2
         Note note2 = new Note();
@@ -99,6 +129,10 @@ public class InitiateOnStartUp {
         note2.setContent("hello world rom2");
         note2.setCreated(Instant.now());
         note2 = noteRepository.save(note2);
+        note2.getTags().add(tag1);
+        note2.getTags().add(tag2);
+        note2 = noteRepository.save(note2);
+
 
         // create note 3
         Note note3 = new Note();
@@ -106,6 +140,10 @@ public class InitiateOnStartUp {
         note3.setContent("hello world rom3");
         note3.setCreated(Instant.now());
         note3 = noteRepository.save(note3);
+        note3.getTags().add(tag3);
+        note3.getTags().add(tag4);
+        note3 = noteRepository.save(note3);
+
 
         // associate Note 1
         accountNoteRepository.save(new AccountNote(account1, note1, Right.OWNER));
@@ -114,9 +152,6 @@ public class InitiateOnStartUp {
         accountNoteRepository.save(new AccountNote(account1, note2, Right.OWNER));
         // associate Note 3
         accountNoteRepository.save(new AccountNote(account1, note3, Right.OWNER));
-
-
-        System.out.println("--------------------------------------------");
     }
 
 }

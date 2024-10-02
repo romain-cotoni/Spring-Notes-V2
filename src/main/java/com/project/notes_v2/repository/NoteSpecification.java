@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class NoteSpecification {
     public static Specification<Note> filterBy(int accountId, String title, String content, String right) {
         return (root, query, criteriaBuilder) -> {

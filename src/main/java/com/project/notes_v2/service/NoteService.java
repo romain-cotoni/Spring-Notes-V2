@@ -18,11 +18,13 @@ import com.project.notes_v2.model.AccountNote;
 import com.project.notes_v2.model.AccountNoteId;
 import com.project.notes_v2.dto.AccountNoteDTO;
 
+import com.project.notes_v2.model.Tag;
 import com.project.notes_v2.repository.AccountNoteRepository;
 import com.project.notes_v2.repository.AccountRepository;
 import com.project.notes_v2.repository.NoteRepository;
 import com.project.notes_v2.repository.NoteSpecification;
 
+import com.project.notes_v2.repository.TagRepository;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -45,6 +47,7 @@ public class NoteService {
     private final NoteRepository noteRepository;
     private final AccountRepository accountRepository;
     private final AccountNoteRepository accountNoteRepository;
+    private final TagRepository tagRepository;
     private final HttpServletRequest httpServletRequest;
     private final NoteMapper noteMapper;
 
@@ -77,10 +80,27 @@ public class NoteService {
     }
 
 
+    public List<NoteResponseDTO> getNotesByTagId(Integer tagId) {
+        Tag tag = tagRepository.findById(tagId)
+                               .orElseThrow( () -> new NotFoundException("Not found Tag by id '" + tagId + "'"));
+        /*List<Note> notes = noteRepository.findNotesByTagsContains(tag)
+                                         .orElseThrow( () -> new NotFoundException("Not found note by tag '" + tag.getName() + "'"));*/
+        List<Note> notes = tag.getNotes();
+        return noteMapper.toNoteResponseDTOList(notes);
+    }
+
+
+    public List<NoteResponseDTO> getNotesByTagName(String tagName) {
+        Tag tag = tagRepository.findTagByName(tagName)
+                               .orElseThrow( () -> new NotFoundException("Not found Tag by tag name '" + tagName + "'"));
+        List<Note> notes = tag.getNotes();
+        return noteMapper.toNoteResponseDTOList(notes);
+    }
+
+
     @Transactional
     public NoteResponseDTO createNote(NoteRequestDTO noteRequestDTO) {
 
-        // map noteToCreate with noteDTO
         Note noteToCreate = new Note();
 
         // set title if empty
@@ -123,6 +143,10 @@ public class NoteService {
         }
         if(noteRequestDTO.getShare() != null) {
             noteToUpdate.setShare(noteRequestDTO.getShare());
+        }
+
+        if(noteRequestDTO.getTags() != null) {
+            noteToUpdate.setTags(noteRequestDTO.getTags());
         }
 
         // set the datetime of modification

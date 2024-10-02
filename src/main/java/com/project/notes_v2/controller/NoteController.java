@@ -64,6 +64,17 @@ public class NoteController {
     }
 
 
+    @GetMapping("/tag/{tagId}")
+    public ResponseEntity<List<NoteResponseDTO>> getNotesByTagId(@PathVariable int tagId) {
+        try {
+            List<NoteResponseDTO> noteResponseDTOList = this.noteService.getNotesByTagId(tagId);
+            return ResponseEntity.ok(noteResponseDTOList);
+        } catch(FailedRequestException exception) {
+            throw new FailedRequestException();
+        }
+    }
+
+
     @PostMapping
     public ResponseEntity<NoteResponseDTO> createNote(@RequestBody NoteRequestDTO noteRequestDTO) {
         try {
