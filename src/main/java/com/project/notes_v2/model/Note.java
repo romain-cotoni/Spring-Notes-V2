@@ -63,6 +63,20 @@ public class Note {
     private Set<AccountNote> accountNotes = new HashSet<>(); //sharedWithAccounts
 
     @ManyToMany
-    @JoinTable(name = "note_tag", joinColumns = @JoinColumn(name = "note_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @JoinTable(name = "note_tag",
+               joinColumns = @JoinColumn(name = "note_id"),
+               inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags = new ArrayList<>();
+
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
+        tag.getNotes().remove(this);
+    }
+
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        tag.getNotes().add(this);
+    }
 }

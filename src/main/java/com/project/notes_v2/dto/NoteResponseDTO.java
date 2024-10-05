@@ -4,7 +4,6 @@ import com.project.notes_v2.enumeration.Share;
 import com.project.notes_v2.model.AccountNote;
 import com.project.notes_v2.model.Tag;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

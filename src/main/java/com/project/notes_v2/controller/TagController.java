@@ -1,8 +1,5 @@
 package com.project.notes_v2.controller;
 
-import com.project.notes_v2.dto.NoteRequestDTO;
-import com.project.notes_v2.dto.NoteResponseDTO;
-import com.project.notes_v2.dto.TagRequestDTO;
 import com.project.notes_v2.exception.FailedRequestException;
 import com.project.notes_v2.model.Tag;
 import com.project.notes_v2.service.TagService;

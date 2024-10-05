@@ -122,7 +122,6 @@ public class InitiateOnStartUp {
         note1.getTags().add(tag4);
         note1 = noteRepository.save(note1);
 
-
         // create note 2
         Note note2 = new Note();
         note2.setTitle("note 2 title");

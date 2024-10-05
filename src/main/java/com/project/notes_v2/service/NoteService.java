@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,7 @@ public class NoteService {
     private final TagRepository tagRepository;
     private final HttpServletRequest httpServletRequest;
     private final NoteMapper noteMapper;
+    private final TagService tagService;
 
     /*---------------PUBLIC METHODS---------------*/
 
@@ -83,8 +85,6 @@ public class NoteService {
     public List<NoteResponseDTO> getNotesByTagId(Integer tagId) {
         Tag tag = tagRepository.findById(tagId)
                                .orElseThrow( () -> new NotFoundException("Not found Tag by id '" + tagId + "'"));
-        /*List<Note> notes = noteRepository.findNotesByTagsContains(tag)
-                                         .orElseThrow( () -> new NotFoundException("Not found note by tag '" + tag.getName() + "'"));*/
         List<Note> notes = tag.getNotes();
         return noteMapper.toNoteResponseDTOList(notes);
     }
@@ -134,11 +134,11 @@ public class NoteService {
         // get note to update
         Note noteToUpdate = this.getNote(noteId);
 
-        // update note
+        // Set fields of note to update
         if(StringUtils.hasLength(noteRequestDTO.getTitle())) {
             noteToUpdate.setTitle(noteRequestDTO.getTitle());
         }
-        if(StringUtils.hasLength(noteRequestDTO.getContent())) { // noteDTO.getContent() != null && !noteDTO.getContent().isEmpty()
+        if(StringUtils.hasLength(noteRequestDTO.getContent())) {
             noteToUpdate.setContent(noteRequestDTO.getContent());
         }
         if(noteRequestDTO.getShare() != null) {
@@ -146,14 +146,29 @@ public class NoteService {
         }
 
         if(noteRequestDTO.getTags() != null) {
-            noteToUpdate.setTags(noteRequestDTO.getTags());
+            List<Tag> currentTags = new ArrayList<>(noteToUpdate.getTags());
+
+            // Remove old tags
+            for (Tag tag : currentTags) {
+                noteToUpdate.removeTag(tag);
+            }
+
+            // Add new tags
+            for (Tag newTag : noteRequestDTO.getTags()) {
+                Tag managedTag = tagRepository.findTagByName(newTag.getName())
+                                              .orElseGet(() -> tagService.createTag(newTag.getName()));
+                noteToUpdate.addTag(managedTag);
+            }
         }
 
-        // set the datetime of modification
+        // Set the datetime of modification
         noteToUpdate.setModified(Instant.now());
 
-        // save note
+        // Save note
         Note noteSaved = this.saveNote(noteToUpdate);
+
+        // Clean up orphaned tags
+        tagService.deleteOrphanTags();
 
         return this.noteMapper.toNoteResponseDTO(noteSaved);
     }
@@ -161,17 +176,17 @@ public class NoteService {
 
     @Transactional
     public void eraseNote(int noteId) {
-        // check user is allowed to delete note
+        // Check user is allowed to delete note
         if(this.checkUserHasRight(Right.DELETE, noteId)) {
-            // get all AccountNote association with NOTE been deleted
+            // Get all AccountNote association with NOTE been deleted
             List<AccountNote> accountNotesToDeleteList = this.getAccountNoteByNoteId(noteId);
 
-            //remove from all accounts associated
+            // Remove from all accounts associated
             accountNotesToDeleteList.forEach( accountNote -> {
                 this.deleteAccountNote(new AccountNoteId(accountNote.getAccount().getId(), noteId));
             });
 
-            //delete Note
+            // Delete Note
             this.deleteNote(noteId);
 
         } else if(this.checkUserHasRight(Right.READ, noteId)) {
@@ -356,6 +371,5 @@ public class NoteService {
             throw new UnauthenticatedException();
         }
     }
-
 
 }

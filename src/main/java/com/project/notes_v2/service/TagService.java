@@ -1,20 +1,17 @@
 package com.project.notes_v2.service;
 
-import com.project.notes_v2.dto.TagRequestDTO;
 import com.project.notes_v2.exception.NotFoundException;
 import com.project.notes_v2.exception.SaveException;
-import com.project.notes_v2.model.Account;
 import com.project.notes_v2.model.Note;
 import com.project.notes_v2.model.Tag;
-import com.project.notes_v2.repository.AccountSpecification;
 import com.project.notes_v2.repository.NoteRepository;
-import com.project.notes_v2.repository.NoteSpecification;
 import com.project.notes_v2.repository.TagRepository;
 
 import com.project.notes_v2.repository.TagSpecification;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -46,6 +43,28 @@ public class TagService {
     }
 
 
+    @Transactional
+    public void deleteOrphanTags() {
+        List<Tag> orphanTags = tagRepository.findAll().stream()
+                                            .filter(tag -> tag.getNotes().isEmpty())
+                                            .toList();
+        tagRepository.deleteAll(orphanTags);
+    }
+
+    public void deleteOrphanTags(int noteId) {
+        Note note = this.noteRepository.findById(noteId)
+                                       .orElseThrow( () -> new NotFoundException("Not found Note by id '" + noteId + "'"));
+        List<Tag> tags = note.getTags();
+        // Get orphan tags
+        tags.forEach(tag -> {
+            if(tag.getNotes().isEmpty()) {
+                tags.remove(tag);
+                this.tagRepository.delete(tag);
+            }
+        });
+    }
+
+
     /*---------------PRIVATE METHODS---------------*/
 
     private Tag saveTag(Tag tag) {
@@ -55,6 +74,5 @@ public class TagService {
             throw new SaveException();
         }
     }
-
 
 }
